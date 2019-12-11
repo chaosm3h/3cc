@@ -6,18 +6,18 @@
 #include <string.h>
 
 typedef enum {
-  TK_RESERVED, // 記号
-  TK_NUM,      // 整数トークン
-  TK_EOF,      // 入力の終わりを表すトークン
+  TK_RESERVED, // operator token
+  TK_NUM,      // num token
+  TK_EOF,      // end token
 } TokenKind;
 
 typedef struct Token Token;
 
 struct Token {
-  TokenKind kind; // トークンの型
-  Token *next;    // 次の入力トークン
-  int val;        // kindがTK_NUMの場合、その数値
-  char *str;      // トークン文字列
+  TokenKind kind; // type of token
+  Token *next;    // next token
+  int val;        // If TK_NUM, this is num
+  char *str;      // token string
 };
 
 char *user_input;
@@ -36,7 +36,7 @@ void error_at(char *loc, char *fmt, ...) {
 
   int pos = loc - user_input;
   fprintf(stderr, "%s\n", user_input);
-  fprintf(stderr, "%*s", pos, ""); // pos個の空白を出力
+  fprintf(stderr, "%*s", pos, " ");
   fprintf(stderr, "^ ");
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
@@ -94,7 +94,7 @@ Token *tokenize() {
       cur->val = strtol(p, &p, 10);
       continue;
     }
-    error_at(p, "トークナイズできません");
+    error_at(p, "Can't tokenize...");
   }
 
   new_token(TK_EOF, cur, p);
@@ -103,7 +103,7 @@ Token *tokenize() {
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    error("数ではありません");
+    error("expected 2 args");
     return 1;
   }
 
